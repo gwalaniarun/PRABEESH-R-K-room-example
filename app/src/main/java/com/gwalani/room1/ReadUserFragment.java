@@ -1,6 +1,7 @@
 package com.gwalani.room1;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,23 +29,39 @@ public class ReadUserFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_read_user, container, false);
-        textInfo =  view.findViewById(R.id.name);
+        textInfo = view.findViewById(R.id.name);
 
-        List<User> users = MainActivity.myAppDatabase.myDao().getUsers();
+        loadUsers();
+        return view;
+    }
 
-        String info = "";
+    public void loadUsers() {
+        new MyAsyncTask().execute();
+    }
 
-        for(User usr : users){
 
-            int id = usr.getId();
-            String name = usr.getName();
-            String email = usr.getEmail();
+    public class MyAsyncTask extends AsyncTask<String, Void, List<User>> {
 
-            info = info + "\n\n" + "ID: " + id + "\nName: " + name + "\nEmail: " + email;
+        @Override
+        protected List<User> doInBackground(String... strings) {
+            return MainActivity.myAppDatabase.myDao().getUsers();
         }
 
-        textInfo.setText(info);
-        return view;
+        @Override
+        protected void onPostExecute(List<User> user) {
+            String info = "";
+
+            for (User usr : user) {
+
+                int id = usr.getId();
+                String name = usr.getName();
+                String email = usr.getEmail();
+
+                info = info + "\n\n" + "ID: " + id + "\nName: " + name + "\nEmail: " + email;
+            }
+
+            textInfo.setText(info);
+        }
     }
 
 }

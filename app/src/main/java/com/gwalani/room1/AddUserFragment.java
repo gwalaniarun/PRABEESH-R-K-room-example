@@ -1,6 +1,8 @@
 package com.gwalani.room1;
 
 
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,7 +18,7 @@ import android.widget.Toast;
  */
 public class AddUserFragment extends Fragment {
 
-    private EditText userId,userName,userEmail;
+    private EditText userId, userName, userEmail;
     private Button saveButton;
 
     public AddUserFragment() {
@@ -46,7 +48,27 @@ public class AddUserFragment extends Fragment {
                 user.setName(muserName);
                 user.setEmail(muserEmail);
 
-                MainActivity.myAppDatabase.myDao().addUser(user);
+                addUserThroughAsyncTask(user);
+
+            }
+        });
+
+        return view;
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public void addUserThroughAsyncTask(User user) {
+        new AsyncTask<User, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(User... users) {
+                MainActivity.myAppDatabase.myDao().addUser(users[0]);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
 
                 Toast.makeText(getActivity(), "User Added successfully", Toast.LENGTH_SHORT).show();
 
@@ -54,10 +76,7 @@ public class AddUserFragment extends Fragment {
                 userName.setText("");
                 userEmail.setText("");
             }
-        });
-
-        return view;
+        }.execute(user);
     }
-
 
 }

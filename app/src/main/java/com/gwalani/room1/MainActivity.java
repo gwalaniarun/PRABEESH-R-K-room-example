@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
         myAppDatabase = Room.databaseBuilder(getApplicationContext(), MyAppDatabase.class, "user.db")
-                .build();
+               .build();
 
 
         if (findViewById(R.id.frame_layout) != null) {
